@@ -13,6 +13,7 @@ import {
 } from "three";
 
 import { isMesh } from "~/utils/is-mesh";
+import { PlanetModal } from "~/PlanetModal";
 
 import SolarSystem from "~~/assets/models/scene.glb";
 import skyboxTexture from "../../assets/textures/HDR_blue_nebulae-1.hdr";
@@ -73,6 +74,28 @@ export class ExampleScene extends Scene implements Lifecycle {
     "makemake",
   ];
 
+  private getPlanetRealName(meshName: string): string {
+    const meshToNameMapping: { [key: string]: string } = {
+      Object_4: "Mercure",
+      Object_6: "Vénus",
+      Object_8: "Terre",
+      Object_10: "Mars",
+      Object_12: "Jupiter",
+      Object_14: "Saturne",
+      Object_16: "Uranus",
+      Object_18: "Neptune",
+      Object_20: "Soleil",
+      Object_22: "Lune",
+      Object_24: "Cérès",
+      Object_26: "Éris",
+      Object_28: "Hauméa",
+      Object_30: "Makémaké",
+      Object_32: "Anneaux de Saturne",
+    };
+
+    return meshToNameMapping[meshName] || meshName;
+  }
+
   private createTextLabel(text: string): Sprite {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d")!;
@@ -100,6 +123,7 @@ export class ExampleScene extends Scene implements Lifecycle {
 
   public planets: { mesh: Mesh; radius: number; name: string }[] = [];
   public planetLabels: Sprite[] = [];
+  public planetModal?: PlanetModal;
 
   public async load(): Promise<void> {
     const solarsystem = await new Promise<GLTF>((resolve, reject) => {
@@ -137,14 +161,16 @@ export class ExampleScene extends Scene implements Lifecycle {
         });
         this.add(child);
 
-        const label = this.createTextLabel(
-          child.name || `Planet_${this.planets.length}`
-        );
+        const realName = this.getPlanetRealName(childName);
+        console.log(`Mesh: ${childName} -> Real name: ${realName}`);
+        const label = this.createTextLabel(realName);
         this.planetLabels.push(label);
         this.add(label);
       }
     });
     this.camera.position.set(15000, 15000, 15000);
+
+    this.planetModal = new PlanetModal(this.camera, this.planets);
   }
 
   public update(): void {
@@ -157,6 +183,7 @@ export class ExampleScene extends Scene implements Lifecycle {
         break;
       }
     }
+
     this.sunLight.shadow.camera.lookAt(this.planets[2].mesh.position);
 
     for (let i = 0; i < this.planets.length; i++) {

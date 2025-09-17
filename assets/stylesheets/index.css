@@ -21,3 +21,147 @@ canvas {
   object-fit: cover;
   position: absolute;
 }
+
+.planet-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.planet-modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 15px;
+}
+
+.modal-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.planet-info {
+  color: #fff;
+  line-height: 1.6;
+}
+
+.info-section {
+  margin-bottom: 20px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #87ceeb;
+  display: inline-block;
+  min-width: 150px;
+  margin-bottom: 5px;
+}
+
+.info-value {
+  color: #fff;
+  margin-left: 10px;
+}
+
+.info-row {
+  margin-bottom: 8px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.planet-type {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #87ceeb;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.satellites-section {
+  margin-top: 20px;
+}
+
+.satellites-title {
+  font-size: 18px;
+  color: #87ceeb;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.satellite-item {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border-left: 3px solid #87ceeb;
+}
+
+.satellite-name {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.notes {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border-left: 4px solid #ffd700;
+}
+
+.notes-title {
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 8px;
+}
+
+.notes-text {
+  font-style: italic;
+  line-height: 1.5;
+}
