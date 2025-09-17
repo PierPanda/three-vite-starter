@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1;
-  transition: opacity .4s .2s;
+  transition: opacity 0.4s 0.2s;
 }
 
 body.loaded .loader {

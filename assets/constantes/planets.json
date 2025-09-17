@@ -1,0 +1,323 @@
+{
+  "solarSystem": {
+    "planets": {
+      "sun": {
+        "name": "Soleil",
+        "type": "Étoile (G2V)",
+        "diameter_km": "1392700",
+        "mass_kg": "1.989e30",
+        "gravity_m_s2": "274",
+        "temperature_surface_c": "5500",
+        "temperature_core_c": "15000000",
+        "distance_from_earth_au": "1",
+        "rotation_days_equator": "25",
+        "rotation_days_poles": "35",
+        "notes": "Source de ~99.8% de la masse du Système solaire. Fusion H→He."
+      },
+      "mercure": {
+        "name": "Mercure",
+        "type": "Tellurique",
+        "diameter_km": "4879",
+        "mass_kg": "3.3e23",
+        "gravity_m_s2": "3.7",
+        "distance_from_sun_au": "0.39",
+        "distance_from_sun_km": "57910000",
+        "average_temperature_c": "167",
+        "rotation_period_days_sidereal": "58.646",
+        "rotation_direction": "prograde",
+        "orbital_period_days": "88",
+        "satellites": [],
+        "notes": "Pas d'atmosphère significative; très fortes variations de température (-173 → +427°C)."
+      },
+      "venus": {
+        "name": "Vénus",
+        "type": "Tellurique",
+        "diameter_km": "12104",
+        "mass_kg": "4.87e24",
+        "gravity_m_s2": "8.87",
+        "distance_from_sun_au": "0.72",
+        "distance_from_sun_km": "108200000",
+        "average_temperature_c": "464",
+        "rotation_period_days_sidereal": "-243.0",
+        "rotation_direction": "rétrograde",
+        "orbital_period_days": "224.7",
+        "satellites": [],
+        "notes": "Atmosphère dense de CO₂, pression ≈ 92 atm; effet de serre extrême."
+      },
+      "earth": {
+        "name": "Terre",
+        "type": "Tellurique",
+        "diameter_km": "12742",
+        "mass_kg": "5.97e24",
+        "gravity_m_s2": "9.81",
+        "distance_from_sun_au": "1",
+        "distance_from_sun_km": "149600000",
+        "average_temperature_c": "15",
+        "rotation_period_hours_sidereal": "23.934",
+        "rotation_direction": "prograde",
+        "orbital_period_days": "365.25",
+        "satellites": [
+          {
+            "name": "Lune",
+            "type": "Satellite naturel",
+            "diameter_km": "3474",
+            "mass_kg": "7.35e22",
+            "gravity_m_s2": "1.62",
+            "distance_from_planet_km": "384400",
+            "notes": "Provoque les marées; formation probable par impact géant."
+          }
+        ],
+        "notes": "Seule planète connue avec vie; atmosphère riche en O₂."
+      },
+      "mars": {
+        "name": "Mars",
+        "type": "Tellurique",
+        "diameter_km": "6794",
+        "mass_kg": "6.42e23",
+        "gravity_m_s2": "3.71",
+        "distance_from_sun_au": "1.524",
+        "distance_from_sun_km": "227940000",
+        "average_temperature_c": "-63",
+        "rotation_period_hours_sidereal": "24.623",
+        "rotation_direction": "prograde",
+        "orbital_period_days": "687",
+        "satellites": [
+          {
+            "name": "Phobos",
+            "diameter_km": "22.4",
+            "mass_kg": "1.06e16",
+            "distance_from_planet_km": "9400",
+            "notes": "Très proche, probablement finira par s’écraser."
+          },
+          {
+            "name": "Deimos",
+            "diameter_km": "12.4",
+            "mass_kg": "1.48e15",
+            "distance_from_planet_km": "23500",
+            "notes": "Petit, peut être un astéroïde capturé."
+          }
+        ],
+        "notes": "Volcans géants (Olympus Mons), traces d'eau ancienne, atmosphère très ténue."
+      },
+      "jupiter": {
+        "name": "Jupiter",
+        "type": "Géante gazeuse",
+        "diameter_km": "139820",
+        "mass_kg": "1.9e27",
+        "gravity_m_s2": "24.79",
+        "distance_from_sun_au": "5.204",
+        "distance_from_sun_km": "778330000",
+        "average_temperature_c": "-110",
+        "rotation_period_hours_sidereal": "9.925",
+        "rotation_direction": "prograde",
+        "orbital_period_years": "11.86",
+        "satellites": [
+          {
+            "name": "Io",
+            "diameter_km": "3642",
+            "notes": "Volcanisme extrêmement actif."
+          },
+          {
+            "name": "Europe",
+            "diameter_km": "3122",
+            "notes": "Océan sous-glace → cible astrobiologie."
+          },
+          {
+            "name": "Ganymède",
+            "diameter_km": "5268",
+            "notes": "Plus grand satellite du Système solaire."
+          },
+          {
+            "name": "Callisto",
+            "diameter_km": "4820",
+            "notes": "Surface fortement cratérisée."
+          }
+        ],
+        "notes": "Grande Tache Rouge (anticyclone), fort champ magnétique."
+      },
+      "saturne": {
+        "name": "Saturne",
+        "type": "Géante gazeuse",
+        "diameter_km": "116460",
+        "mass_kg": "5.68e26",
+        "gravity_m_s2": "10.44",
+        "distance_from_sun_au": "9.582",
+        "distance_from_sun_km": "1429400000",
+        "average_temperature_c": "-140",
+        "rotation_period_hours_sidereal": "10.65",
+        "rotation_direction": "prograde",
+        "orbital_period_years": "29.45",
+        "satellites": [
+          {
+            "name": "Titan",
+            "diameter_km": "5151",
+            "notes": "Atmosphère dense; lacs de méthane/éthane."
+          },
+          {
+            "name": "Encelade",
+            "diameter_km": "504",
+            "notes": "Geysers d'eau; océan souterrain probable."
+          }
+        ],
+        "notes": "Système d'anneaux très visible."
+      },
+      "uranus": {
+        "name": "Uranus",
+        "type": "Géante glacée",
+        "diameter_km": 50724,
+        "mass_kg": 8.68e25,
+        "gravity_m_s2": 8.69,
+        "distance_from_sun_au": 19.218,
+        "distance_from_sun_km": 2871000000,
+        "average_temperature_c": -195,
+        "rotation_period_hours_sidereal": -17.24,
+        "rotation_direction": "rétrograde (axe incliné ~98°)",
+        "orbital_period_years": 84,
+        "satellites": [
+          {
+            "name": "Miranda",
+            "diameter_km": 471,
+            "notes": "Surface variée; signes de resurfaçage."
+          },
+          {
+            "name": "Ariel",
+            "diameter_km": 1158,
+            "notes": "Lacunes et failles."
+          }
+        ],
+        "notes": "Axe très incliné (pratiquement 'couchée')."
+      },
+      "neptune": {
+        "name": "Neptune",
+        "type": "Géante glacée",
+        "diameter_km": 49244,
+        "mass_kg": 1.02e26,
+        "gravity_m_s2": 11.15,
+        "distance_from_sun_au": 30.07,
+        "distance_from_sun_km": 4495100000,
+        "average_temperature_c": -200,
+        "rotation_period_hours_sidereal": 16.11,
+        "rotation_direction": "prograde",
+        "orbital_period_years": 164.8,
+        "satellites": [
+          {
+            "name": "Triton",
+            "diameter_km": 2710,
+            "notes": "Orbite rétrograde; probablement capturé; cryovolcanisme."
+          }
+        ],
+        "notes": "Vents très puissants; forte activité dynamique atmosphérique."
+      },
+      "ceres": {
+        "name": "Cérès",
+        "type": "Planète naine (ceinture principale)",
+        "diameter_km": "940",
+        "mass_kg": "9.39e20",
+        "gravity_m_s2": "0.27",
+        "distance_from_sun_au": "2.77",
+        "satellites": [],
+        "notes": "Contient de la glace; possibles signes d'activité cryovolcanique passée."
+      },
+      "pluton": {
+        "name": "Pluton",
+        "type": "Planète naine (ceinture de Kuiper)",
+        "diameter_km": "2377",
+        "mass_kg": "1.31e22",
+        "gravity_m_s2": "0.62",
+        "distance_from_sun_au": "39.48",
+        "satellites": [
+          {
+            "name": "Charon",
+            "diameter_km": "1212",
+            "notes": "Couple binaire notable (centre de masse extérieur à Pluton)."
+          },
+          { "name": "Nix" },
+          { "name": "Hydra" },
+          { "name": "Kerberos" },
+          { "name": "Styx" }
+        ],
+        "notes": "Atmosphère ténue; surface riche en glace d'azote/méthane."
+      },
+      "eris": {
+        "name": "Éris",
+        "type": "Planète naine (scattered disk)",
+        "diameter_km": "2366",
+        "mass_kg": "1.66e22",
+        "gravity_m_s2": "0.82",
+        "distance_from_sun_au": "67.78",
+        "satellites": [
+          { "name": "Dysnomia", "notes": "Satellite connu d'Éris." }
+        ],
+        "notes": "Plus massive que Pluton; orbite très excentrique."
+      },
+      "haumea": {
+        "name": "Hauméa",
+        "type": "Planète naine (ceinture de Kuiper)",
+        "diameter_km": { "a": "1632", "b": "1018" },
+        "mass_kg": 4.01e21,
+        "gravity_m_s2": 0.44,
+        "distance_from_sun_au": 43.13,
+        "satellites": [{ "name": "Hiʻiaka" }, { "name": "Namaka" }],
+        "notes": "Forme allongée due à une rotation très rapide."
+      },
+      "makemake": {
+        "name": "Makémaké",
+        "type": "Planète naine (ceinture de Kuiper)",
+        "diameter_km": "1434",
+        "mass_kg": "3.1e21",
+        "gravity_m_s2": "0.5",
+        "distance_from_sun_au": "45.79",
+        "satellites": [{ "name": "MK2 (S/2015 (136472) 1)" }],
+        "notes": "Surface riche en méthane; atmosphère très ténue possible."
+      }
+    },
+    "rotationPeriodsHours": {
+      "mercure": 1407.504,
+      "venus": -5832,
+      "earth": 23.934,
+      "mars": 24.623,
+      "jupiter": 9.925,
+      "saturne": 10.65,
+      "uranus": -17.24,
+      "neptune": 16.11,
+      "sun": 600,
+      "moon": 655.2,
+      "ceres": 9.07,
+      "eris": 4.0,
+      "haumea": 3.9,
+      "makemake": 22.48
+    },
+    "orbitalPeriods": {
+      "mercure": 88,
+      "venus": 224.7,
+      "earth": 365.25,
+      "mars": 687,
+      "jupiter": 4331,
+      "saturne": 10751,
+      "uranus": 30660,
+      "neptune": 60212,
+      "sun": 365.25,
+      "moon": 27,
+      "ceres": 1011,
+      "eris": 247600,
+      "haumea": 157500,
+      "makemake": 167200
+    },
+    "orbitalRadii": {
+      "mercure": 97,
+      "venus": 180,
+      "earth": 250,
+      "mars": 381,
+      "jupiter": 1301,
+      "saturne": 2395,
+      "uranus": 4805,
+      "neptune": 7518,
+      "sun": 5,
+      "moon": 270,
+      "ceres": 693,
+      "eris": 16945,
+      "haumea": 10783,
+      "makemake": 11448
+    }
+  }
+}
