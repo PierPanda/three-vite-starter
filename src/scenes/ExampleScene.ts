@@ -254,7 +254,7 @@ export class ExampleScene extends Scene implements Lifecycle {
 
       if (planet && label) {
         label.position.copy(planet.mesh.position);
-        label.position.y += 5;
+        label.position.y += planet.mesh.scale.y + 50;
       }
     }
   }
