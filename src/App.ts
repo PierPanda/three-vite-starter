@@ -43,10 +43,17 @@ export class App implements Lifecycle {
       resize: this.resize,
     });
 
+    this.controls = new Controls({
+      camera: this.camera,
+      element: this.renderer.domElement,
+      clock: this.clock,
+    });
+
     this.scene = new ExampleScene({
       viewport: this.viewport,
       camera: this.camera,
       clock: this.clock,
+      controls: this.controls,
     });
 
     this.composer = new Composer({
@@ -57,20 +64,11 @@ export class App implements Lifecycle {
       camera: this.camera,
     });
 
-    this.controls = new Controls({
-      camera: this.camera,
-      element: this.renderer.domElement,
-      clock: this.clock,
-    });
-
     this.loop = new Loop({
       tick: this.tick,
     });
   }
 
-  /**
-   * Load the app with its components and assets
-   */
   public async load(): Promise<void> {
     await Promise.all([this.composer.load(), this.scene.load()]);
 
@@ -79,9 +77,6 @@ export class App implements Lifecycle {
     }
   }
 
-  /**
-   * Start the app rendering loop
-   */
   public start(): void {
     this.viewport.start();
     this.clock.start();
@@ -90,18 +85,12 @@ export class App implements Lifecycle {
     this.gui?.start();
   }
 
-  /**
-   * Stop the app rendering loop
-   */
   public stop(): void {
     this.controls.stop();
     this.viewport.stop();
     this.loop.stop();
   }
 
-  /**
-   * Update the app state, called each loop tick
-   */
   public update(): void {
     this.clock.update();
     this.controls.update();
@@ -110,16 +99,10 @@ export class App implements Lifecycle {
     this.composer.update();
   }
 
-  /**
-   * Render the app with its current state, called each loop tick
-   */
   public render(): void {
     this.composer.render();
   }
 
-  /**
-   * Stop the app and dispose of used resourcess
-   */
   public dispose(): void {
     this.controls.dispose();
     this.viewport.dispose();
@@ -130,25 +113,16 @@ export class App implements Lifecycle {
     this.gui?.dispose();
   }
 
-  /**
-   * Tick handler called by the loop
-   */
   public tick = (): void => {
     this.update();
     this.render();
   };
 
-  /**
-   * Resize handler called by the viewport
-   */
   public resize = (): void => {
     this.composer.resize();
     this.scene.resize();
   };
 
-  /**
-   * Create, load and start an app instance with the given parameters
-   */
   public static async mount(parameters: AppParameters): Promise<App> {
     const app = new this(parameters);
     await app.load();

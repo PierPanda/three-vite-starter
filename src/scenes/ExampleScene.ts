@@ -5,15 +5,13 @@ import {
   Mesh,
   Vector3,
   Sprite,
-  SpriteMaterial,
-  CanvasTexture,
   EquirectangularReflectionMapping,
   type Texture,
-  // CameraHelper,
 } from "three";
 
 import { isMesh } from "~/utils/is-mesh";
 import { PlanetModal } from "~/PlanetModal";
+import type { Controls } from "~/Controls";
 
 import SolarSystem from "~~/assets/models/scene.glb";
 import skyboxTexture from "../../assets/textures/HDR_blue_nebulae-1.hdr";
@@ -27,19 +25,27 @@ export interface MainSceneParamaters {
   clock: Clock;
   camera: PerspectiveCamera;
   viewport: Viewport;
+  controls: Controls;
 }
 export class ExampleScene extends Scene implements Lifecycle {
   public clock: Clock;
   public camera: PerspectiveCamera;
   public viewport: Viewport;
+  public controls: Controls;
   public sunLight: PointLight;
 
-  public constructor({ clock, camera, viewport }: MainSceneParamaters) {
+  public constructor({
+    clock,
+    camera,
+    viewport,
+    controls,
+  }: MainSceneParamaters) {
     super();
 
     this.clock = clock;
     this.camera = camera;
     this.viewport = viewport;
+    this.controls = controls;
 
     this.sunLight = new PointLight(0xffffff, 10, 250000, 0.1);
     this.sunLight.position.set(0, 0, 0);
@@ -96,31 +102,6 @@ export class ExampleScene extends Scene implements Lifecycle {
     return meshToNameMapping[meshName] || meshName;
   }
 
-  private createTextLabel(text: string): Sprite {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d")!;
-
-    canvas.width = 256;
-    canvas.height = 64;
-
-    context.font = "24px Arial";
-    context.fillStyle = "white";
-    context.strokeStyle = "black";
-    context.lineWidth = 2;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-
-    context.fillText(text, canvas.width / 2, canvas.height / 2);
-
-    const texture = new CanvasTexture(canvas);
-    const material = new SpriteMaterial({ map: texture });
-    const sprite = new Sprite(material);
-
-    sprite.scale.set(50, 12.5, 1);
-
-    return sprite;
-  }
-
   public planets: { mesh: Mesh; radius: number; name: string }[] = [];
   public planetLabels: Sprite[] = [];
   public planetModal?: PlanetModal;
@@ -163,14 +144,15 @@ export class ExampleScene extends Scene implements Lifecycle {
 
         const realName = this.getPlanetRealName(childName);
         console.log(`Mesh: ${childName} -> Real name: ${realName}`);
-        const label = this.createTextLabel(realName);
-        this.planetLabels.push(label);
-        this.add(label);
       }
     });
     this.camera.position.set(15000, 15000, 15000);
 
-    this.planetModal = new PlanetModal(this.camera, this.planets);
+    this.planetModal = new PlanetModal(
+      this.camera,
+      this.controls,
+      this.planets
+    );
   }
 
   public update(): void {
@@ -271,18 +253,8 @@ export class ExampleScene extends Scene implements Lifecycle {
       }
     }
 
-    for (
-      let i = 0;
-      i < this.planets.length && i < this.planetLabels.length;
-      i++
-    ) {
-      const planet = this.planets[i];
-      const label = this.planetLabels[i];
-
-      if (planet && label) {
-        label.position.copy(planet.mesh.position);
-        label.position.y += planet.mesh.scale.y + 50;
-      }
+    if (this.planetModal) {
+      this.planetModal.update();
     }
   }
 

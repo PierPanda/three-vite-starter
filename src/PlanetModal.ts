@@ -1,5 +1,6 @@
-import { Raycaster, Vector2, Camera, Mesh } from "three";
+import { Raycaster, Vector2, Camera, Mesh, Vector3 } from "three";
 import planetsData from "~~/assets/constantes/planets.json";
+import type { Controls } from "./Controls";
 
 export interface PlanetData {
   name: string;
@@ -40,14 +41,24 @@ export class PlanetModal {
   private raycaster: Raycaster;
   private mouse: Vector2;
   private camera: Camera;
+  private controls: Controls;
   private planets: { mesh: Mesh; radius: number; name: string }[];
+  private originalCameraPosition: Vector3;
+  private originalCameraTarget: Vector3;
+  private isModalOpen: boolean = false;
+  private followedPlanet: Mesh | null = null;
+  private cameraOffset: Vector3 = new Vector3();
 
   constructor(
     camera: Camera,
+    controls: Controls,
     planets: { mesh: Mesh; radius: number; name: string }[]
   ) {
     this.camera = camera;
+    this.controls = controls;
     this.planets = planets;
+    this.originalCameraPosition = new Vector3();
+    this.originalCameraTarget = new Vector3();
 
     this.modal = document.getElementById("planet-modal")!;
     this.modalTitle = document.getElementById("modal-title")!;
@@ -61,17 +72,19 @@ export class PlanetModal {
   }
 
   private setupEventListeners(): void {
-    this.closeButton.addEventListener("click", () => this.closeModal());
+    this.closeButton.addEventListener("click", () => {
+      this.closeModal().catch(console.error);
+    });
 
     this.modal.addEventListener("click", (event) => {
       if (event.target === this.modal) {
-        this.closeModal();
+        this.closeModal().catch(console.error);
       }
     });
 
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        this.closeModal();
+      if (event.key === "Escape" && this.isModalOpen) {
+        this.closeModal().catch(console.error);
       }
     });
 
@@ -81,6 +94,10 @@ export class PlanetModal {
   }
 
   private onWindowClick(event: MouseEvent): void {
+    if (this.isModalOpen) {
+      return;
+    }
+
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -94,35 +111,99 @@ export class PlanetModal {
       const planet = this.planets.find((p) => p.mesh === clickedMesh);
 
       if (planet) {
-        this.showPlanetInfo(planet.name);
+        this.showPlanetInfo(planet.name, planet.mesh);
       }
     }
   }
 
+  private async focusOnPlanet(planetMesh: Mesh): Promise<void> {
+    this.originalCameraPosition.copy(this.camera.position);
+
+    const currentTarget = new Vector3();
+    this.controls.getTarget(currentTarget);
+    this.originalCameraTarget.copy(currentTarget);
+
+    this.followedPlanet = planetMesh;
+
+    const planetPosition = planetMesh.position.clone();
+    const planetScale = Math.max(
+      planetMesh.scale.x,
+      planetMesh.scale.y,
+      planetMesh.scale.z
+    );
+    const distance = planetScale * 8;
+
+    this.cameraOffset.set(distance * 0.6, distance * 0.3, distance);
+    const newCameraPosition = planetPosition.clone().add(this.cameraOffset);
+
+    await this.controls.setLookAt(
+      newCameraPosition.x,
+      newCameraPosition.y,
+      newCameraPosition.z,
+      planetPosition.x,
+      planetPosition.y,
+      planetPosition.z,
+      true
+    );
+  }
+
+  private async restoreCameraPosition(): Promise<void> {
+    this.followedPlanet = null;
+
+    await this.controls.setLookAt(
+      this.originalCameraPosition.x,
+      this.originalCameraPosition.y,
+      this.originalCameraPosition.z,
+      this.originalCameraTarget.x,
+      this.originalCameraTarget.y,
+      this.originalCameraTarget.z,
+      true
+    );
+  }
+
+  public update(): void {
+    if (this.followedPlanet && this.isModalOpen) {
+      const planetPosition = this.followedPlanet.position.clone();
+      const newCameraPosition = planetPosition.clone().add(this.cameraOffset);
+
+      this.controls.setLookAt(
+        newCameraPosition.x,
+        newCameraPosition.y,
+        newCameraPosition.z,
+        planetPosition.x,
+        planetPosition.y,
+        planetPosition.z,
+        false
+      );
+    }
+  }
+
   private getPlanetKey(meshName: string): string | null {
-    // Mapping correct selon l'ordre du système solaire : Mercure, Vénus, Terre, Mars, Jupiter, Saturne, Uranus, Neptune
     const nameMapping: { [key: string]: string } = {
-      Object_4: "mercure",    // Le plus proche du soleil
-      Object_6: "venus",      // Deuxième planète
-      Object_8: "earth",      // Troisième planète (utilise "earth" comme dans le JSON)
-      Object_10: "mars",      // Quatrième planète
-      Object_12: "jupiter",   // Cinquième planète
-      Object_14: "saturne",   // Sixième planète
-      Object_16: "uranus",    // Septième planète
-      Object_18: "neptune",   // Huitième planète
-      Object_20: "sun",       // Le soleil
-      Object_22: "moon",      // La lune (satellite de la Terre)
-      Object_24: "ceres",     // Planète naine
-      Object_26: "eris",      // Planète naine
-      Object_28: "haumea",    // Planète naine
-      Object_30: "makemake",  // Planète naine
-      Object_32: "saturne",   // Anneaux de Saturne (même données que Saturne)
+      Object_4: "mercure",
+      Object_6: "venus",
+      Object_8: "earth",
+      Object_10: "mars",
+      Object_12: "jupiter",
+      Object_14: "saturne",
+      Object_16: "uranus",
+      Object_18: "neptune",
+      Object_20: "sun",
+      Object_22: "moon",
+      Object_24: "ceres",
+      Object_26: "eris",
+      Object_28: "haumea",
+      Object_30: "makemake",
+      Object_32: "saturne",
     };
 
     return nameMapping[meshName] || null;
   }
 
-  private showPlanetInfo(meshName: string): void {
+  private async showPlanetInfo(
+    meshName: string,
+    planetMesh: Mesh
+  ): Promise<void> {
     const planetKey = this.getPlanetKey(meshName);
 
     if (!planetKey) {
@@ -130,7 +211,10 @@ export class PlanetModal {
       return;
     }
 
-    // Cas spécial pour la lune
+    this.isModalOpen = true;
+
+    await this.focusOnPlanet(planetMesh);
+
     if (planetKey === "moon") {
       this.showMoonInfo();
       return;
@@ -152,7 +236,6 @@ export class PlanetModal {
   }
 
   private showMoonInfo(): void {
-    // La lune est dans les satellites de la Terre
     const earthData = planetsData.solarSystem.planets.earth;
     const moonData = earthData.satellites?.[0];
 
@@ -396,7 +479,11 @@ export class PlanetModal {
     return html;
   }
 
-  private closeModal(): void {
+  private async closeModal(): Promise<void> {
     this.modal.classList.remove("show");
+    this.isModalOpen = false;
+
+    // Restaurer la position originale de la caméra
+    await this.restoreCameraPosition();
   }
 }
