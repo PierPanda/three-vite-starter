@@ -84,6 +84,9 @@ export class GUI extends Pane implements Lifecycle {
 
     // Première tentative après 100ms
     setTimeout(checkAndAddControls, 100);
+
+    // Ajouter les contrôles des planètes immédiatement
+    this.addPlanetControls();
   }
 
   public stop(): void {
@@ -124,8 +127,6 @@ export class GUI extends Pane implements Lifecycle {
           max: 0.1,
           step: 0.001,
           label: "🌀 Vitesse du bruit",
-        }).on("change", (ev: any) => {
-          console.log("🔄 noiseSpeed changé:", ev.value);
         });
 
         this.addBinding(sunMaterial.uniforms.noiseAmplitude, "value", {
@@ -133,8 +134,6 @@ export class GUI extends Pane implements Lifecycle {
           max: 1,
           step: 0.01,
           label: "📈 Amplitude du bruit",
-        }).on("change", (ev: any) => {
-          console.log("🔄 noiseAmplitude changé:", ev.value);
         });
 
         this.addButton({
@@ -146,7 +145,6 @@ export class GUI extends Pane implements Lifecycle {
           sunMaterial.uniforms.noiseSpeed.value = defaultNoiseSpeed;
           sunMaterial.uniforms.noiseAmplitude.value = defaultNoiseAmplitude;
 
-          console.log("🔄 Valeurs réinitialisées");
           this.refresh();
           setTimeout(() => {
             this.addSunControls();
@@ -154,6 +152,22 @@ export class GUI extends Pane implements Lifecycle {
         });
       }
     }
+  }
+
+  private addPlanetControls(): void {
+    this.addBinding(this.app.scene, "orbitalSpeedMultiplier", {
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "🪐 Vitesse orbitale",
+    });
+
+    this.addButton({
+      title: "🔄 Reset Vitesse",
+    }).on("click", () => {
+      this.app.scene.orbitalSpeedMultiplier = 1;
+      this.refresh();
+    });
   }
 
   private toggleFpsGraph(enabled: boolean): void {

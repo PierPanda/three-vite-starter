@@ -93,6 +93,7 @@ export class ExampleScene extends Scene implements Lifecycle {
   public planets: { mesh: Mesh; radius: number; name: string }[] = [];
   public planetLabels: Sprite[] = [];
   public planetModal?: PlanetModal;
+  public orbitalSpeedMultiplier: number = 1;
 
   public async load(): Promise<void> {
     const solarsystem = await new Promise<GLTF>((resolve, reject) => {
@@ -154,12 +155,14 @@ export class ExampleScene extends Scene implements Lifecycle {
         this.add(child);
       }
     });
-    this.camera.position.set(15000, 15000, 15000);
+    this.controls.setPosition(15000, 15000, 15000);
+    this.controls.setTarget(0, 0, 0);
 
     this.planetModal = new PlanetModal(
       this.camera,
       this.controls,
-      this.planets
+      this.planets,
+      this
     );
   }
 
@@ -215,7 +218,10 @@ export class ExampleScene extends Scene implements Lifecycle {
         const saturnOrbitalPeriod =
           planetsData.solarSystem.orbitalPeriods.saturne;
 
-        const saturnOrbitalSpeed = 0.00002 * (365.25 / saturnOrbitalPeriod);
+        const saturnOrbitalSpeed =
+          0.00002 *
+          (365.25 / saturnOrbitalPeriod) *
+          this.orbitalSpeedMultiplier;
 
         const angle = this.clock.elapsed * saturnOrbitalSpeed;
 
@@ -233,7 +239,7 @@ export class ExampleScene extends Scene implements Lifecycle {
         if (earth) {
           const earthOrbitalRadius = planetsData.solarSystem.orbitalRadii.earth;
 
-          const earthOrbitalSpeed = 0.0002;
+          const earthOrbitalSpeed = 0.0002 * this.orbitalSpeedMultiplier;
           const earthAngle = this.clock.elapsed * earthOrbitalSpeed + 2 * 0.5;
 
           const earthX = Math.cos(earthAngle) * earthOrbitalRadius;
@@ -242,7 +248,8 @@ export class ExampleScene extends Scene implements Lifecycle {
 
           const moonOrbitalRadius = 15;
           const moonOrbitalPeriod = planetsData.solarSystem.orbitalPeriods.moon;
-          const moonOrbitalSpeed = 0.0002 * (365.25 / moonOrbitalPeriod);
+          const moonOrbitalSpeed =
+            0.0002 * (365.25 / moonOrbitalPeriod) * this.orbitalSpeedMultiplier;
           const moonAngle = this.clock.elapsed * moonOrbitalSpeed;
 
           const moonX = earthX + Math.cos(moonAngle) * moonOrbitalRadius;
@@ -250,13 +257,14 @@ export class ExampleScene extends Scene implements Lifecycle {
           moon.mesh.position.set(moonX, 0, moonZ);
         }
       } else if (i === 2) {
-        continue; // La Terre est gérée dans le cas de la Lune
+        continue;
       } else {
         const baseSpeed = 0.0002;
 
         const period =
           planetsData.solarSystem.orbitalPeriods[planetKey] || 365.25;
-        const orbitalSpeed = baseSpeed * (365.25 / period);
+        const orbitalSpeed =
+          baseSpeed * (365.25 / period) * this.orbitalSpeedMultiplier;
         const angle = this.clock.elapsed * orbitalSpeed + i * 0.5;
 
         planet.mesh.position.x = Math.cos(angle) * orbitalRadius;

@@ -1,4 +1,12 @@
-import { Raycaster, Vector2, Camera, Mesh, Vector3 } from "three";
+import {
+  Raycaster,
+  Vector2,
+  Camera,
+  Mesh,
+  Vector3,
+  DirectionalLight,
+  Scene,
+} from "three";
 import planetsData from "~~/assets/constantes/planets.json";
 import type { Controls } from "./Controls";
 
@@ -48,15 +56,19 @@ export class PlanetModal {
   private isModalOpen: boolean = false;
   private followedPlanet: Mesh | null = null;
   private cameraOffset: Vector3 = new Vector3();
+  private focusLight: DirectionalLight | null = null;
+  private scene: Scene;
 
   constructor(
     camera: Camera,
     controls: Controls,
-    planets: { mesh: Mesh; radius: number; name: string }[]
+    planets: { mesh: Mesh; radius: number; name: string }[],
+    scene: Scene
   ) {
     this.camera = camera;
     this.controls = controls;
     this.planets = planets;
+    this.scene = scene;
     this.originalCameraPosition = new Vector3();
     this.originalCameraTarget = new Vector3();
 
@@ -69,6 +81,57 @@ export class PlanetModal {
     this.mouse = new Vector2();
 
     this.setupEventListeners();
+  }
+
+  private formatNumber(
+    value: string | number | { a: string; b: string }
+  ): string {
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      "a" in value &&
+      "b" in value
+    ) {
+      return `${value.a} x ${value.b}`;
+    }
+
+    if (typeof value === "string") {
+      const numValue = parseFloat(value);
+      if (isNaN(numValue)) {
+        return value;
+      }
+      return numValue.toLocaleString("fr-FR");
+    }
+
+    if (typeof value === "number") {
+      return value.toLocaleString("fr-FR");
+    }
+
+    return String(value);
+  }
+
+  public async closeModal(): Promise<void> {
+    if (!this.isModalOpen) return;
+
+    this.modal.classList.remove("show");
+    this.isModalOpen = false;
+    this.followedPlanet = null;
+
+    if (this.focusLight) {
+      this.scene.remove(this.focusLight);
+      this.scene.remove(this.focusLight.target);
+      this.focusLight = null;
+    }
+
+    await this.controls.setLookAt(
+      this.originalCameraPosition.x,
+      this.originalCameraPosition.y,
+      this.originalCameraPosition.z,
+      this.originalCameraTarget.x,
+      this.originalCameraTarget.y,
+      this.originalCameraTarget.z,
+      true
+    );
   }
 
   private setupEventListeners(): void {
@@ -125,7 +188,9 @@ export class PlanetModal {
 
     this.followedPlanet = planetMesh;
 
+    this.focusLight = new DirectionalLight(0xffffff, 2);
     const planetPosition = planetMesh.position.clone();
+
     const planetScale = Math.max(
       planetMesh.scale.x,
       planetMesh.scale.y,
@@ -135,6 +200,13 @@ export class PlanetModal {
 
     this.cameraOffset.set(distance * 0.6, distance * 0.3, distance);
     const newCameraPosition = planetPosition.clone().add(this.cameraOffset);
+
+    this.focusLight.position.copy(newCameraPosition);
+    this.focusLight.target.position.copy(planetPosition);
+    this.focusLight.target.updateMatrixWorld();
+
+    this.scene.add(this.focusLight);
+    this.scene.add(this.focusLight.target);
 
     await this.controls.setLookAt(
       newCameraPosition.x,
@@ -147,24 +219,16 @@ export class PlanetModal {
     );
   }
 
-  private async restoreCameraPosition(): Promise<void> {
-    this.followedPlanet = null;
-
-    await this.controls.setLookAt(
-      this.originalCameraPosition.x,
-      this.originalCameraPosition.y,
-      this.originalCameraPosition.z,
-      this.originalCameraTarget.x,
-      this.originalCameraTarget.y,
-      this.originalCameraTarget.z,
-      true
-    );
-  }
-
   public update(): void {
     if (this.followedPlanet && this.isModalOpen) {
       const planetPosition = this.followedPlanet.position.clone();
       const newCameraPosition = planetPosition.clone().add(this.cameraOffset);
+
+      if (this.focusLight) {
+        this.focusLight.position.copy(newCameraPosition);
+        this.focusLight.target.position.copy(planetPosition);
+        this.focusLight.target.updateMatrixWorld();
+      }
 
       this.controls.setLookAt(
         newCameraPosition.x,
@@ -235,200 +299,120 @@ export class PlanetModal {
     this.modal.classList.add("show");
   }
 
-  private showMoonInfo(): void {
-    const earthData = planetsData.solarSystem.planets.earth;
-    const moonData = earthData.satellites?.[0];
-
-    if (!moonData) {
-      console.warn("Moon data not found in Earth satellites");
-      return;
-    }
-
-    this.modalTitle.textContent = moonData.name;
-
-    let html = `<div class="planet-type">${moonData.type}</div>`;
-    html += '<div class="info-section">';
-
-    if (moonData.diameter_km) {
-      html += `<div class="info-row">
-        <span class="info-label">Diamètre:</span>
-        <span class="info-value">${this.formatNumber(
-          moonData.diameter_km
-        )} km</span>
-      </div>`;
-    }
-
-    if (moonData.mass_kg) {
-      html += `<div class="info-row">
-        <span class="info-label">Masse:</span>
-        <span class="info-value">${this.formatNumber(
-          moonData.mass_kg
-        )} kg</span>
-      </div>`;
-    }
-
-    if (moonData.gravity_m_s2) {
-      html += `<div class="info-row">
-        <span class="info-label">Gravité:</span>
-        <span class="info-value">${this.formatNumber(
-          moonData.gravity_m_s2
-        )} m/s²</span>
-      </div>`;
-    }
-
-    if (moonData.distance_from_planet_km) {
-      html += `<div class="info-row">
-        <span class="info-label">Distance de la Terre:</span>
-        <span class="info-value">${this.formatNumber(
-          moonData.distance_from_planet_km
-        )} km</span>
-      </div>`;
-    }
-
-    html += "</div>";
-
-    if (moonData.notes) {
-      html += '<div class="notes">';
-      html += '<div class="notes-title">Notes</div>';
-      html += `<div class="notes-text">${moonData.notes}</div>`;
-      html += "</div>";
-    }
-
-    this.modalBody.innerHTML = html;
-    this.modal.classList.add("show");
-  }
-
-  private formatNumber(
-    value: string | number | { a: string; b: string }
-  ): string {
-    if (typeof value === "object" && value.a && value.b) {
-      return `${value.a} × ${value.b}`;
-    }
-    if (typeof value === "string") {
-      if (value.includes("e")) {
-        return parseFloat(value).toExponential(2);
-      }
-      return value;
-    }
-    return value.toLocaleString();
-  }
-
   private generatePlanetHTML(data: PlanetData): string {
-    let html = `<div class="planet-type">${data.type}</div>`;
-
+    let html = `<div class="planet-info">`;
+    html += `<div class="planet-type">${data.type}</div>`;
     html += '<div class="info-section">';
 
     if (data.diameter_km) {
       html += `<div class="info-row">
-        <span class="info-label">Diamètre:</span>
-        <span class="info-value">${this.formatNumber(
-          data.diameter_km
-        )} km</span>
-      </div>`;
+      <span class="info-label">Diamètre</span>
+      <span class="info-value">${this.formatNumber(data.diameter_km)} km</span>
+    </div>`;
     }
 
     if (data.mass_kg) {
       html += `<div class="info-row">
-        <span class="info-label">Masse:</span>
-        <span class="info-value">${this.formatNumber(data.mass_kg)} kg</span>
-      </div>`;
+      <span class="info-label">Masse</span>
+      <span class="info-value">${this.formatNumber(data.mass_kg)} kg</span>
+    </div>`;
     }
 
     if (data.gravity_m_s2) {
       html += `<div class="info-row">
-        <span class="info-label">Gravité:</span>
-        <span class="info-value">${this.formatNumber(
-          data.gravity_m_s2
-        )} m/s²</span>
-      </div>`;
+      <span class="info-label">Gravité</span>
+      <span class="info-value">${this.formatNumber(
+        data.gravity_m_s2
+      )} m/s²</span>
+    </div>`;
     }
 
     if (data.distance_from_sun_au) {
       html += `<div class="info-row">
-        <span class="info-label">Distance du Soleil:</span>
-        <span class="info-value">${this.formatNumber(
-          data.distance_from_sun_au
-        )} UA</span>
-      </div>`;
+      <span class="info-label">Distance du Soleil</span>
+      <span class="info-value">${this.formatNumber(
+        data.distance_from_sun_au
+      )} UA</span>
+    </div>`;
     }
 
     if (data.distance_from_sun_km) {
       html += `<div class="info-row">
-        <span class="info-label">Distance du Soleil:</span>
-        <span class="info-value">${this.formatNumber(
-          data.distance_from_sun_km
-        )} km</span>
-      </div>`;
+      <span class="info-label">Distance du Soleil</span>
+      <span class="info-value">${this.formatNumber(
+        data.distance_from_sun_km
+      )} km</span>
+    </div>`;
     }
 
     if (data.average_temperature_c) {
       html += `<div class="info-row">
-        <span class="info-label">Température moyenne:</span>
-        <span class="info-value">${this.formatNumber(
-          data.average_temperature_c
-        )}°C</span>
-      </div>`;
+      <span class="info-label">Température moyenne</span>
+      <span class="info-value">${this.formatNumber(
+        data.average_temperature_c
+      )}°C</span>
+    </div>`;
     }
 
     if (data.temperature_surface_c) {
       html += `<div class="info-row">
-        <span class="info-label">Température de surface:</span>
-        <span class="info-value">${this.formatNumber(
-          data.temperature_surface_c
-        )}°C</span>
-      </div>`;
+      <span class="info-label">Température de surface</span>
+      <span class="info-value">${this.formatNumber(
+        data.temperature_surface_c
+      )}°C</span>
+    </div>`;
     }
 
     if (data.temperature_core_c) {
       html += `<div class="info-row">
-        <span class="info-label">Température du noyau:</span>
-        <span class="info-value">${this.formatNumber(
-          data.temperature_core_c
-        )}°C</span>
-      </div>`;
+      <span class="info-label">Température du noyau</span>
+      <span class="info-value">${this.formatNumber(
+        data.temperature_core_c
+      )}°C</span>
+    </div>`;
     }
 
     if (data.rotation_period_days_sidereal) {
       html += `<div class="info-row">
-        <span class="info-label">Période de rotation:</span>
-        <span class="info-value">${this.formatNumber(
-          data.rotation_period_days_sidereal
-        )} jours</span>
-      </div>`;
+      <span class="info-label">Période de rotation</span>
+      <span class="info-value">${this.formatNumber(
+        data.rotation_period_days_sidereal
+      )} jours</span>
+    </div>`;
     }
 
     if (data.rotation_period_hours_sidereal) {
       html += `<div class="info-row">
-        <span class="info-label">Période de rotation:</span>
-        <span class="info-value">${this.formatNumber(
-          data.rotation_period_hours_sidereal
-        )} heures</span>
-      </div>`;
+      <span class="info-label">Période de rotation</span>
+      <span class="info-value">${this.formatNumber(
+        data.rotation_period_hours_sidereal
+      )} heures</span>
+    </div>`;
     }
 
     if (data.rotation_direction) {
       html += `<div class="info-row">
-        <span class="info-label">Direction de rotation:</span>
-        <span class="info-value">${data.rotation_direction}</span>
-      </div>`;
+      <span class="info-label">Direction de rotation</span>
+      <span class="info-value">${data.rotation_direction}</span>
+    </div>`;
     }
 
     if (data.orbital_period_days) {
       html += `<div class="info-row">
-        <span class="info-label">Période orbitale:</span>
-        <span class="info-value">${this.formatNumber(
-          data.orbital_period_days
-        )} jours</span>
-      </div>`;
+      <span class="info-label">Période orbitale</span>
+      <span class="info-value">${this.formatNumber(
+        data.orbital_period_days
+      )} jours</span>
+    </div>`;
     }
 
     if (data.orbital_period_years) {
       html += `<div class="info-row">
-        <span class="info-label">Période orbitale:</span>
-        <span class="info-value">${this.formatNumber(
-          data.orbital_period_years
-        )} années</span>
-      </div>`;
+      <span class="info-label">Période orbitale</span>
+      <span class="info-value">${this.formatNumber(
+        data.orbital_period_years
+      )} années</span>
+    </div>`;
     }
 
     html += "</div>";
@@ -460,7 +444,7 @@ export class PlanetModal {
         }
 
         if (satellite.notes) {
-          html += `<div style="margin-top: 5px; font-style: italic;">${satellite.notes}</div>`;
+          html += `<div style="margin-top: 8px; font-style: italic; color: #a0b3c5;">${satellite.notes}</div>`;
         }
 
         html += "</div>";
@@ -471,19 +455,77 @@ export class PlanetModal {
 
     if (data.notes) {
       html += '<div class="notes">';
-      html += '<div class="notes-title">Notes</div>';
+      html += '<div class="notes-title">Informations</div>';
       html += `<div class="notes-text">${data.notes}</div>`;
       html += "</div>";
     }
 
+    html += "</div>";
+
     return html;
   }
 
-  private async closeModal(): Promise<void> {
-    this.modal.classList.remove("show");
-    this.isModalOpen = false;
+  private showMoonInfo(): void {
+    const earthData = planetsData.solarSystem.planets.earth;
+    const moonData = earthData.satellites?.[0];
 
-    // Restaurer la position originale de la caméra
-    await this.restoreCameraPosition();
+    if (!moonData) {
+      console.warn("Moon data not found in Earth satellites");
+      return;
+    }
+
+    this.modalTitle.textContent = moonData.name;
+
+    let html = `<div class="planet-info">`;
+    html += `<div class="planet-type">${moonData.type}</div>`;
+    html += '<div class="info-section">';
+
+    if (moonData.diameter_km) {
+      html += `<div class="info-row">
+      <span class="info-label">Diamètre</span>
+      <span class="info-value">${this.formatNumber(
+        moonData.diameter_km
+      )} km</span>
+    </div>`;
+    }
+
+    if (moonData.mass_kg) {
+      html += `<div class="info-row">
+      <span class="info-label">Masse</span>
+      <span class="info-value">${this.formatNumber(moonData.mass_kg)} kg</span>
+    </div>`;
+    }
+
+    if (moonData.gravity_m_s2) {
+      html += `<div class="info-row">
+      <span class="info-label">Gravité</span>
+      <span class="info-value">${this.formatNumber(
+        moonData.gravity_m_s2
+      )} m/s²</span>
+    </div>`;
+    }
+
+    if (moonData.distance_from_planet_km) {
+      html += `<div class="info-row">
+      <span class="info-label">Distance de la Terre</span>
+      <span class="info-value">${this.formatNumber(
+        moonData.distance_from_planet_km
+      )} km</span>
+    </div>`;
+    }
+
+    html += "</div>";
+
+    if (moonData.notes) {
+      html += '<div class="notes">';
+      html += '<div class="notes-title">Informations</div>';
+      html += `<div class="notes-text">${moonData.notes}</div>`;
+      html += "</div>";
+    }
+
+    html += "</div>";
+
+    this.modalBody.innerHTML = html;
+    this.modal.classList.add("show");
   }
 }
