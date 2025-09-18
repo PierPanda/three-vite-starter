@@ -43,6 +43,29 @@ export class GUI extends Pane implements Lifecycle {
       this.toggleFpsGraph(this.app.loop.running);
     });
 
+    // Contrôles pour l'effet de plasma du soleil
+    const sunFolder = this.addFolder({
+      title: "Sun Plasma Effect",
+      expanded: true,
+    });
+
+    const plasmaControls = {
+      intensity: 0.8,
+    };
+
+    sunFolder
+      .addBinding(plasmaControls, "intensity", {
+        min: 0,
+        max: 1,
+        step: 0.1,
+        label: "Plasma Intensity",
+      })
+      .on("change", (event) => {
+        if (this.app.scene.sunMaterial) {
+          this.app.scene.sunMaterial.setPlasmaIntensity(event.value);
+        }
+      });
+
     this.applyStyle();
   }
 

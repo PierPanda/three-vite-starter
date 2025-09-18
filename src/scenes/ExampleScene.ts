@@ -6,20 +6,28 @@ import {
   Vector3,
   Sprite,
   EquirectangularReflectionMapping,
+  TextureLoader,
   type Texture,
+  Material,
+  RepeatWrapping,
 } from "three";
 
 import { isMesh } from "~/utils/is-mesh";
 import { PlanetModal } from "~/PlanetModal";
 import type { Controls } from "~/Controls";
+import { EnhancedSunMaterial } from "~/materials/EnhancedSunMaterial";
 
 import SolarSystem from "~~/assets/models/scene.glb";
 import skyboxTexture from "../../assets/textures/HDR_blue_nebulae-1.hdr";
+import noiseTexture from "../../assets/textures/perlin-noise.png";
 import planetsData from "~~/assets/constantes/planets.json";
 
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/Addons.js";
 import type { Viewport, Clock, Lifecycle } from "~/core";
+
+import noiseMapsrc from "~~/assets/textures/perlin-noise.png";
+import sunMapsrc from "~~/assets/textures/Solarstexture.jpg";
 
 export interface MainSceneParamaters {
   clock: Clock;
@@ -33,6 +41,8 @@ export class ExampleScene extends Scene implements Lifecycle {
   public viewport: Viewport;
   public controls: Controls;
   public sunLight: PointLight;
+  public enhancedSunMaterial?: EnhancedSunMaterial;
+  public noiseTexture: Texture;
 
   public constructor({
     clock,
@@ -47,6 +57,9 @@ export class ExampleScene extends Scene implements Lifecycle {
     this.viewport = viewport;
     this.controls = controls;
 
+    const textureLoader = new TextureLoader();
+    this.noiseTexture = textureLoader.load(noiseTexture);
+
     this.sunLight = new PointLight(0xffffff, 10, 250000, 0.1);
     this.sunLight.position.set(0, 0, 0);
     this.sunLight.castShadow = true;
@@ -58,9 +71,6 @@ export class ExampleScene extends Scene implements Lifecycle {
     this.sunLight.shadow.camera.far = 300;
 
     this.add(this.sunLight);
-
-    // const cameraHelper = new CameraHelper(this.sunLight.shadow.camera);
-    // this.add(cameraHelper);
   }
 
   public planetNames = [
@@ -115,6 +125,21 @@ export class ExampleScene extends Scene implements Lifecycle {
     const skybox = await new Promise<Texture>((resolve, reject) => {
       new RGBELoader().load(skyboxTexture, resolve, undefined, reject);
     });
+
+    const noiseMap = await new Promise<Texture>((resolve, reject) => {
+      new TextureLoader().load(noiseMapsrc, resolve, reject);
+    });
+
+    const sunMap = await new Promise<Texture>((resolve, reject) => {
+      new TextureLoader().load(sunMapsrc, resolve, reject);
+    });
+
+    sunMap.wrapS = RepeatWrapping;
+    sunMap.wrapT = RepeatWrapping;
+
+    noiseMap.wrapS = RepeatWrapping;
+    noiseMap.wrapT = RepeatWrapping;
+
     skybox.mapping = EquirectangularReflectionMapping;
     this.background = skybox;
     this.environment = skybox;
@@ -130,6 +155,16 @@ export class ExampleScene extends Scene implements Lifecycle {
 
         const childName = child.name;
         const isSun = childName === "Object_20" || radius < 1;
+
+        if (isSun) {
+          console.log("Original sun baseMaterial:", child.material);
+          child.material = new EnhancedSunMaterial(
+            child.material as Material,
+            noiseMap,
+            sunMap
+          );
+          this.enhancedSunMaterial = child.material as EnhancedSunMaterial;
+        }
 
         if (!isSun) {
           child.scale.multiplyScalar(12);
@@ -156,6 +191,10 @@ export class ExampleScene extends Scene implements Lifecycle {
   }
 
   public update(): void {
+    if (this.enhancedSunMaterial) {
+      this.enhancedSunMaterial.uniforms.time.value = this.clock.elapsed / 1000;
+    }
+
     let sunIndex = -1;
     for (let i = 0; i < this.planets.length; i++) {
       const planet = this.planets[i];
