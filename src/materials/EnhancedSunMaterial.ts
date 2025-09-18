@@ -17,8 +17,8 @@ export class EnhancedSunMaterial extends ShaderMaterial {
           value: sunMap,
         },
         time: { value: 0 },
-        noiseAmplitude: { value: 0.5 },
-        noiseSpeed: { value: 0.002 },
+        noiseAmplitude: { value: 0.25 },
+        noiseSpeed: { value: 0.03 },
       },
     });
   }

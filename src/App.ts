@@ -22,6 +22,10 @@ export class App implements Lifecycle {
   public scene: ExampleScene;
   public gui?: GUI;
 
+  public get sunMaterial() {
+    return this.scene.enhancedSunMaterial;
+  }
+
   public constructor({ canvas, debug = false }: AppParameters = {}) {
     this.debug = debug;
     this.clock = new Clock();

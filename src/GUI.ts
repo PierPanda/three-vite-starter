@@ -43,34 +43,47 @@ export class GUI extends Pane implements Lifecycle {
       this.toggleFpsGraph(this.app.loop.running);
     });
 
-    // Contrôles pour l'effet de plasma du soleil
-    const sunFolder = this.addFolder({
-      title: "Sun Plasma Effect",
-      expanded: true,
-    });
-
-    const plasmaControls = {
-      intensity: 0.8,
-    };
-
-    sunFolder
-      .addBinding(plasmaControls, "intensity", {
-        min: 0,
-        max: 1,
-        step: 0.1,
-        label: "Plasma Intensity",
-      })
-      .on("change", (event) => {
-        if (this.app.scene.sunMaterial) {
-          this.app.scene.sunMaterial.setPlasmaIntensity(event.value);
-        }
-      });
-
     this.applyStyle();
   }
 
   public start(): void {
     this.app.renderer.domElement.parentElement?.appendChild(this.container);
+
+    console.log("🚀 Démarrage de la GUI...");
+
+    // Système de retry avec compteur pour éviter les boucles infinies
+    let retryCount = 0;
+    const maxRetries = 20; // Maximum 20 tentatives (4 secondes)
+
+    const checkAndAddControls = () => {
+      retryCount++;
+      console.log(
+        `🔍 Tentative ${retryCount}/${maxRetries} - Vérification du matériau du soleil...`
+      );
+
+      if (this.app.sunMaterial && this.app.sunMaterial.uniforms) {
+        console.log("✅ Matériau trouvé, ajout des contrôles...");
+        this.addSunControls();
+      } else if (retryCount < maxRetries) {
+        console.log(`⏳ Matériau non trouvé, retry dans 200ms...`);
+        setTimeout(checkAndAddControls, 200);
+      } else {
+        console.error(
+          "❌ Échec: Matériau du soleil non trouvé après",
+          maxRetries,
+          "tentatives"
+        );
+        console.log("🔍 Debug - App:", this.app);
+        console.log("🔍 Debug - Scene:", this.app.scene);
+        console.log(
+          "🔍 Debug - Enhanced material:",
+          this.app.scene?.enhancedSunMaterial
+        );
+      }
+    };
+
+    // Première tentative après 100ms
+    setTimeout(checkAndAddControls, 100);
   }
 
   public stop(): void {
@@ -96,6 +109,51 @@ export class GUI extends Pane implements Lifecycle {
       "rgba(0, 0, 0, 0)"
     );
     this.element.style.setProperty("--bld-vw", "190px");
+  }
+
+  private addSunControls(): void {
+    const sunMaterial = this.app.sunMaterial;
+
+    if (sunMaterial && sunMaterial.uniforms) {
+      if (
+        sunMaterial.uniforms.noiseSpeed &&
+        sunMaterial.uniforms.noiseAmplitude
+      ) {
+        this.addBinding(sunMaterial.uniforms.noiseSpeed, "value", {
+          min: 0,
+          max: 0.1,
+          step: 0.001,
+          label: "🌀 Vitesse du bruit",
+        }).on("change", (ev: any) => {
+          console.log("🔄 noiseSpeed changé:", ev.value);
+        });
+
+        this.addBinding(sunMaterial.uniforms.noiseAmplitude, "value", {
+          min: 0,
+          max: 1,
+          step: 0.01,
+          label: "📈 Amplitude du bruit",
+        }).on("change", (ev: any) => {
+          console.log("🔄 noiseAmplitude changé:", ev.value);
+        });
+
+        this.addButton({
+          title: "🔄 Reset Soleil",
+        }).on("click", () => {
+          const defaultNoiseSpeed = 0.025;
+          const defaultNoiseAmplitude = 0.2;
+
+          sunMaterial.uniforms.noiseSpeed.value = defaultNoiseSpeed;
+          sunMaterial.uniforms.noiseAmplitude.value = defaultNoiseAmplitude;
+
+          console.log("🔄 Valeurs réinitialisées");
+          this.refresh();
+          setTimeout(() => {
+            this.addSunControls();
+          }, 500);
+        });
+      }
+    }
   }
 
   private toggleFpsGraph(enabled: boolean): void {

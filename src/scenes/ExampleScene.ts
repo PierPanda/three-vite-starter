@@ -90,28 +90,6 @@ export class ExampleScene extends Scene implements Lifecycle {
     "makemake",
   ];
 
-  private getPlanetRealName(meshName: string): string {
-    const meshToNameMapping: { [key: string]: string } = {
-      Object_4: "Mercure",
-      Object_6: "Vénus",
-      Object_8: "Terre",
-      Object_10: "Mars",
-      Object_12: "Jupiter",
-      Object_14: "Saturne",
-      Object_16: "Uranus",
-      Object_18: "Neptune",
-      Object_20: "Soleil",
-      Object_22: "Lune",
-      Object_24: "Cérès",
-      Object_26: "Éris",
-      Object_28: "Hauméa",
-      Object_30: "Makémaké",
-      Object_32: "Anneaux de Saturne",
-    };
-
-    return meshToNameMapping[meshName] || meshName;
-  }
-
   public planets: { mesh: Mesh; radius: number; name: string }[] = [];
   public planetLabels: Sprite[] = [];
   public planetModal?: PlanetModal;
@@ -120,7 +98,6 @@ export class ExampleScene extends Scene implements Lifecycle {
     const solarsystem = await new Promise<GLTF>((resolve, reject) => {
       new GLTFLoader().load(SolarSystem, resolve, undefined, reject);
     });
-    console.log("Solar Sysytem", solarsystem);
 
     const skybox = await new Promise<Texture>((resolve, reject) => {
       new RGBELoader().load(skyboxTexture, resolve, undefined, reject);
@@ -157,7 +134,6 @@ export class ExampleScene extends Scene implements Lifecycle {
         const isSun = childName === "Object_20" || radius < 1;
 
         if (isSun) {
-          console.log("Original sun baseMaterial:", child.material);
           child.material = new EnhancedSunMaterial(
             child.material as Material,
             noiseMap,
@@ -176,9 +152,6 @@ export class ExampleScene extends Scene implements Lifecycle {
           name: childName,
         });
         this.add(child);
-
-        const realName = this.getPlanetRealName(childName);
-        console.log(`Mesh: ${childName} -> Real name: ${realName}`);
       }
     });
     this.camera.position.set(15000, 15000, 15000);
