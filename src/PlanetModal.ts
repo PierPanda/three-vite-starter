@@ -135,24 +135,42 @@ export class PlanetModal {
   }
 
   private setupEventListeners(): void {
-    this.closeButton.addEventListener("click", () => {
-      this.closeModal().catch(console.error);
+    this.closeButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.closeModal();
+    });
+
+    this.closeButton.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.closeModal();
     });
 
     this.modal.addEventListener("click", (event) => {
       if (event.target === this.modal) {
-        this.closeModal().catch(console.error);
+        this.closeModal();
+      }
+    });
+
+    this.modal.addEventListener("touchend", (event) => {
+      if (event.target === this.modal) {
+        this.closeModal();
       }
     });
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && this.isModalOpen) {
-        this.closeModal().catch(console.error);
+        this.closeModal();
       }
     });
 
     window.addEventListener("click", (event: MouseEvent) =>
       this.onWindowClick(event)
+    );
+
+    window.addEventListener("touchend", (event: TouchEvent) =>
+      this.onWindowTouch(event)
     );
   }
 
@@ -163,6 +181,36 @@ export class PlanetModal {
 
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+
+    const meshes = this.planets.map((planet) => planet.mesh);
+    const intersects = this.raycaster.intersectObjects(meshes);
+
+    if (intersects.length > 0) {
+      const clickedMesh = intersects[0].object as Mesh;
+      const planet = this.planets.find((p) => p.mesh === clickedMesh);
+
+      if (planet) {
+        this.showPlanetInfo(planet.name, planet.mesh);
+      }
+    }
+  }
+
+  private onWindowTouch(event: TouchEvent): void {
+    if (this.isModalOpen) {
+      return;
+    }
+
+    // Empêcher le comportement par défaut pour éviter les doubles événements
+    event.preventDefault();
+
+    // Utiliser le premier point de contact
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+
+    this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+    this.mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
 

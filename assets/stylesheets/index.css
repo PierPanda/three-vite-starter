@@ -35,6 +35,9 @@ canvas {
   padding: 40px;
   opacity: 0;
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Amélioration pour mobile */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .planet-modal.show {
@@ -117,6 +120,22 @@ canvas {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(10px);
+  /* Amélioration pour mobile */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  /* Zone de clic plus large sur mobile */
+  position: relative;
+}
+
+.modal-close::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  /* Zone de clic invisible plus large */
 }
 
 .modal-close:hover {
