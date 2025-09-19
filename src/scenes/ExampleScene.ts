@@ -195,7 +195,7 @@ export class ExampleScene extends Scene implements Lifecycle {
       sound.setRefDistance(20);
       sound.play();
       sound.setLoop(true);
-      sound.setVolume(0.75);
+      sound.setVolume(0.5);
     });
     imperialDestroyer.scene.add(sound);
   }
