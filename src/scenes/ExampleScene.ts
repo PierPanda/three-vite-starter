@@ -10,7 +10,6 @@ import {
   type Texture,
   Material,
   RepeatWrapping,
-  PointLightHelper,
 } from "three";
 
 import { isMesh } from "~/utils/is-mesh";
@@ -168,7 +167,6 @@ export class ExampleScene extends Scene implements Lifecycle {
     imperialDestroyer.scene.scale.setScalar(0.35);
     const destroyerLight = new PointLight(0xffffff, 25000, 2000, 2.2);
     imperialDestroyer.scene.add(destroyerLight);
-    // this.add(new PointLightHelper(destroyerLight, 5));
     destroyerLight.position.set(0, -400, -400);
 
     this.add(imperialDestroyer.scene);

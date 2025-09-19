@@ -419,19 +419,35 @@ canvas {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .modal-content {
+    right: 20px;
+    max-width: 450px;
+  }
+}
+
 @media (max-width: 768px) {
   .planet-modal {
     padding: 20px;
     justify-content: center;
+    align-items: center;
   }
 
   .modal-content {
-    max-width: 100%;
-    transform: translateY(50px) scale(0.95);
+    position: fixed;
+    right: 20px;
+    left: 20px;
+    top: 50%;
+    bottom: auto;
+    max-width: none;
+    width: auto;
+    max-height: 80vh;
+    transform: translateY(-50%) scale(0.9);
+    border-radius: 20px;
   }
 
   .planet-modal.show .modal-content {
-    transform: translateY(0) scale(1);
+    transform: translateY(-50%) scale(1);
   }
 
   .modal-header {
@@ -442,16 +458,196 @@ canvas {
     font-size: 24px;
   }
 
+  .modal-close {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
   .planet-info {
     padding: 24px;
   }
 
+  .planet-type {
+    font-size: 14px;
+    padding: 10px 16px;
+    margin-bottom: 24px;
+  }
+
   .info-row {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 12px;
+    padding: 16px 20px;
+    margin-bottom: 4px;
+  }
+
+  .info-label {
+    font-size: 15px;
   }
 
   .info-value {
     text-align: left;
+    font-size: 15px;
+    padding: 8px 12px;
+  }
+
+  .satellites-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .satellite-item {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .satellite-name {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .satellite-item > div:not(.satellite-name) {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .notes {
+    padding: 24px;
+    margin-top: 24px;
+  }
+
+  .notes-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .notes-text {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 480px) {
+  .planet-modal {
+    padding: 16px;
+  }
+
+  .modal-content {
+    right: 16px;
+    left: 16px;
+    top: 50%;
+    bottom: auto;
+    max-height: 85vh;
+    border-radius: 18px;
+    transform: translateY(-50%) scale(0.9);
+  }
+
+  .planet-modal.show .modal-content {
+    transform: translateY(-50%) scale(1);
+  }
+
+  .modal-header {
+    padding: 20px 20px;
+  }
+
+  .modal-title {
+    font-size: 22px;
+  }
+
+  .modal-close {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .planet-info {
+    padding: 20px;
+  }
+
+  .planet-type {
+    font-size: 13px;
+    padding: 8px 14px;
+    margin-bottom: 20px;
+  }
+
+  .info-row {
+    padding: 14px 16px;
+    gap: 10px;
+    border-radius: 0 10px 10px 0;
+  }
+
+  .info-label {
+    font-size: 14px;
+  }
+
+  .info-value {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+
+  .satellites-title {
+    font-size: 17px;
+    margin-bottom: 18px;
+  }
+
+  .satellite-item {
+    padding: 16px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+  }
+
+  .satellite-name {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .satellite-item > div:not(.satellite-name) {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .notes {
+    padding: 18px;
+    margin-top: 20px;
+  }
+
+  .notes-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .notes-text {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-height: 600px) and (max-width: 768px) {
+  .modal-content {
+    max-height: 85vh;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .planet-modal {
+    align-items: center;
+    justify-content: flex-end;
+    padding: 16px;
+  }
+
+  .modal-content {
+    position: fixed;
+    top: 50%;
+    bottom: auto;
+    right: 20px;
+    left: auto;
+    width: 350px;
+    max-width: 350px;
+    max-height: 90vh;
+    transform: translateY(-50%) scale(0.9);
+  }
+
+  .planet-modal.show .modal-content {
+    transform: translateY(-50%) scale(1);
   }
 }
