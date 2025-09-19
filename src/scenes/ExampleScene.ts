@@ -18,12 +18,12 @@ import type { Controls } from "~/Controls";
 import { EnhancedSunMaterial } from "~/materials/EnhancedSunMaterial";
 
 import SolarSystem from "~~/assets/models/scene.glb";
-import skyboxTexture from "../../assets/textures/HDR_blue_nebulae-1.hdr";
+import skyboxTexture from "../../assets/textures/HDR_blue_nebulae-1.jpg";
 import noiseTexture from "../../assets/textures/perlin-noise.png";
 import planetsData from "~~/assets/constantes/planets.json";
 
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { RGBELoader } from "three/examples/jsm/Addons.js";
+import { RGBELoader, UltraHDRLoader } from "three/examples/jsm/Addons.js";
 import type { Viewport, Clock, Lifecycle } from "~/core";
 
 import noiseMapsrc from "~~/assets/textures/perlin-noise.png";
@@ -101,7 +101,7 @@ export class ExampleScene extends Scene implements Lifecycle {
     });
 
     const skybox = await new Promise<Texture>((resolve, reject) => {
-      new RGBELoader().load(skyboxTexture, resolve, undefined, reject);
+      new UltraHDRLoader().load(skyboxTexture, resolve, undefined, reject);
     });
 
     const noiseMap = await new Promise<Texture>((resolve, reject) => {
