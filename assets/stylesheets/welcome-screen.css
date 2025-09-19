@@ -1,0 +1,214 @@
+/* ===== PAGE D'ACCUEIL ===== */
+.welcome-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #0a0f1c 0%, #1a1f2e 50%, #0f1419 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  overflow: hidden;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.welcome-screen.hidden {
+  opacity: 0;
+  transform: scale(1.1);
+  pointer-events: none;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  max-width: 600px;
+  padding: 40px;
+  animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.welcome-header {
+  margin-bottom: 60px;
+}
+
+.logo-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 30px;
+}
+
+.logo-rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+}
+
+.ring {
+  position: absolute;
+  border: 2px solid rgba(64, 224, 255, 0.3);
+  border-radius: 50%;
+  animation: spin 20s linear infinite;
+}
+
+#ring-1 {
+  width: 100%;
+  height: 100%;
+  border-top-color: rgba(64, 224, 255, 0.8);
+  animation-duration: 20s;
+}
+
+#ring-2 {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  border-right-color: rgba(64, 224, 255, 0.6);
+  animation-duration: 15s;
+  animation-direction: reverse;
+}
+
+#ring-3 {
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  border-bottom-color: rgba(64, 224, 255, 0.9);
+  animation-duration: 25s;
+}
+
+.welcome-title {
+  font-family: "Inter", sans-serif;
+  font-size: 4rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 8px;
+  text-shadow: 0 0 30px rgba(64, 224, 255, 0.4);
+  position: relative;
+  z-index: 4;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.welcome-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #a0b3c5;
+  margin: 0;
+  letter-spacing: 2px;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeIn 1s ease-out 0.8s forwards;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.enter-button {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(64, 224, 255, 0.2) 0%,
+    rgba(64, 224, 255, 0.1) 100%
+  );
+  border: 2px solid rgba(64, 224, 255, 0.4);
+  border-radius: 50px;
+  padding: 18px 40px;
+  font-family: "Inter", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  animation: fadeInUp 1s ease-out 1.2s forwards;
+  min-width: 280px;
+}
+
+.enter-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.enter-button:hover::before {
+  left: 100%;
+}
+
+.enter-button:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(64, 224, 255, 0.3) 0%,
+    rgba(64, 224, 255, 0.15) 100%
+  );
+  border-color: rgba(64, 224, 255, 0.7);
+  box-shadow: 0 0 30px rgba(64, 224, 255, 0.3),
+    inset 0 0 20px rgba(64, 224, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.enter-button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 20px rgba(64, 224, 255, 0.2);
+}
+
+.button-text {
+  position: relative;
+  z-index: 2;
+}
+
+.button-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  background: radial-gradient(
+    circle,
+    rgba(64, 224, 255, 0.3) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.enter-button:hover .button-glow {
+  width: 300px;
+  height: 300px;
+}
+
+.welcome-note {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  animation: fadeIn 1s ease-out 1.6s forwards;
+}

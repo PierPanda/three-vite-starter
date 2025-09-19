@@ -1,0 +1,460 @@
+/* ===== MODALE D'INSTRUCTIONS ===== */
+.instructions-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 20px;
+}
+
+.instructions-overlay.show {
+  opacity: 1;
+}
+
+.instructions-modal {
+  background: linear-gradient(145deg, #0a0f1c 0%, #1a1f2e 50%, #0f1419 100%);
+  border: 1px solid rgba(64, 224, 255, 0.3);
+  border-radius: 24px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(64, 224, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.instructions-modal.show {
+  transform: scale(1) translateY(0);
+}
+
+.instructions-content {
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.instructions-header {
+  background: linear-gradient(
+    135deg,
+    rgba(64, 224, 255, 0.1) 0%,
+    rgba(64, 224, 255, 0.05) 100%
+  );
+  border-bottom: 1px solid rgba(64, 224, 255, 0.2);
+  padding: 32px 32px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+.instructions-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(64, 224, 255, 0.5) 50%,
+    transparent 100%
+  );
+}
+
+.instructions-icon {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.icon-planet {
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle, #40e0ff 0%, #0099cc 100%);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(64, 224, 255, 0.6);
+}
+
+.icon-orbit {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(64, 224, 255, 0.4);
+  border-radius: 50%;
+  border-top-color: rgba(64, 224, 255, 0.8);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin 3s linear infinite;
+}
+
+.instructions-title {
+  font-family: "Inter", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  flex: 1;
+  text-shadow: 0 0 20px rgba(64, 224, 255, 0.3);
+  letter-spacing: -0.5px;
+}
+
+.instructions-close {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.instructions-close:hover {
+  background: rgba(255, 69, 69, 0.1);
+  border-color: rgba(255, 69, 69, 0.3);
+  transform: scale(1.05);
+  color: #ff4545;
+}
+
+.instructions-body {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.instruction-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #40e0ff 0%, rgba(64, 224, 255, 0.3) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.instruction-item:hover {
+  background: rgba(64, 224, 255, 0.05);
+  border-color: rgba(64, 224, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.instruction-item:hover::before {
+  opacity: 1;
+}
+
+.instruction-icon {
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(64, 224, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(64, 224, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.instruction-text {
+  flex: 1;
+}
+
+.instruction-text strong {
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+
+.instruction-text p {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #a0b3c5;
+  margin: 0;
+  line-height: 1.5;
+  letter-spacing: 0.1px;
+}
+
+.instructions-footer {
+  padding: 24px 32px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: center;
+}
+
+.instructions-button {
+  background: linear-gradient(
+    135deg,
+    rgba(64, 224, 255, 0.2) 0%,
+    rgba(64, 224, 255, 0.1) 100%
+  );
+  border: 2px solid rgba(64, 224, 255, 0.4);
+  border-radius: 50px;
+  padding: 16px 32px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  min-width: 220px;
+}
+
+.instructions-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.instructions-button:hover::before {
+  left: 100%;
+}
+
+.instructions-button:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(64, 224, 255, 0.3) 0%,
+    rgba(64, 224, 255, 0.15) 100%
+  );
+  border-color: rgba(64, 224, 255, 0.7);
+  box-shadow: 0 0 30px rgba(64, 224, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.instructions-button:active {
+  transform: translateY(0);
+}
+
+/* ===== RESPONSIVE POUR MOBILE ===== */
+@media (max-width: 768px) {
+  .instructions-overlay {
+    padding: 16px;
+  }
+
+  .instructions-modal {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 20px;
+  }
+
+  .instructions-header {
+    padding: 24px 24px 20px;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .instructions-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .icon-orbit {
+    width: 42px;
+    height: 42px;
+  }
+
+  .icon-planet {
+    width: 20px;
+    height: 20px;
+  }
+
+  .instructions-title {
+    font-size: 20px;
+    order: -1;
+  }
+
+  .instructions-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .instructions-body {
+    padding: 24px;
+    gap: 20px;
+  }
+
+  .instruction-item {
+    padding: 16px;
+    gap: 16px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .instruction-icon {
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    align-self: center;
+  }
+
+  .instruction-text strong {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .instruction-text p {
+    font-size: 13px;
+  }
+
+  .instructions-footer {
+    padding: 20px 24px 24px;
+  }
+
+  .instructions-button {
+    padding: 14px 28px;
+    font-size: 14px;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .instructions-overlay {
+    padding: 12px;
+  }
+
+  .instructions-modal {
+    border-radius: 18px;
+    max-height: 92vh;
+  }
+
+  .instructions-header {
+    padding: 20px 20px 16px;
+  }
+
+  .instructions-title {
+    font-size: 18px;
+  }
+
+  .instructions-close {
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .instructions-body {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .instruction-item {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .instruction-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .instruction-text strong {
+    font-size: 14px;
+  }
+
+  .instruction-text p {
+    font-size: 12px;
+  }
+
+  .instructions-footer {
+    padding: 16px 20px 20px;
+  }
+
+  .instructions-button {
+    padding: 12px 24px;
+    font-size: 13px;
+    min-width: 180px;
+  }
+}
+
+@media (max-height: 600px) {
+  .instructions-modal {
+    max-height: 95vh;
+  }
+
+  .instructions-header {
+    padding: 20px 24px 16px;
+  }
+
+  .instructions-body {
+    padding: 20px 24px;
+    gap: 16px;
+  }
+
+  .instruction-item {
+    padding: 12px 16px;
+  }
+
+  .instructions-footer {
+    padding: 16px 24px 20px;
+  }
+}
+

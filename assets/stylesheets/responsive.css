@@ -1,0 +1,66 @@
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .welcome-content {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .logo-rings {
+    width: 150px;
+    height: 150px;
+  }
+
+  .welcome-title {
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+  }
+
+  .welcome-subtitle {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .enter-button {
+    padding: 16px 32px;
+    font-size: 1rem;
+    min-width: 250px;
+  }
+
+  .orbit-1 {
+    width: 80vw;
+    height: 80vw;
+  }
+
+  .orbit-2 {
+    width: 100vw;
+    height: 100vw;
+  }
+
+  .orbit-3 {
+    width: 120vw;
+    height: 120vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-title {
+    font-size: 2rem;
+    letter-spacing: 2px;
+  }
+
+  .welcome-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .enter-button {
+    padding: 14px 28px;
+    font-size: 0.9rem;
+    min-width: 220px;
+  }
+
+  .logo-rings {
+    width: 120px;
+    height: 120px;
+  }
+}
+
