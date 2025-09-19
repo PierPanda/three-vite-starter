@@ -165,6 +165,7 @@ export class ExampleScene extends Scene implements Lifecycle {
         this.add(child);
       }
     });
+
     imperialDestroyer.scene.position.set(0, 6000, 0);
 
     imperialDestroyer.scene.rotation.x = Math.PI;
@@ -195,7 +196,7 @@ export class ExampleScene extends Scene implements Lifecycle {
       sound.setRefDistance(20);
       sound.play();
       sound.setLoop(true);
-      sound.setVolume(0.25);
+      sound.setVolume(0.45);
     });
     imperialDestroyer.scene.add(sound);
   }
