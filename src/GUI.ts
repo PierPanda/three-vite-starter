@@ -5,7 +5,6 @@ import type { App } from "~/App";
 
 export class GUI extends Pane implements Lifecycle {
   public app: App;
-  public fpsGraph: EssentialsPlugin.FpsGraphBladeApi;
 
   public get container(): HTMLElement {
     return <HTMLElement>this.element.parentNode;
@@ -18,54 +17,19 @@ export class GUI extends Pane implements Lifecycle {
 
     this.registerPlugin(EssentialsPlugin);
     this.app = app;
-
-    this.fpsGraph = <EssentialsPlugin.FpsGraphBladeApi>this.addBlade({
-      view: "fpsgraph",
-      label: "",
-      rows: 2,
-    });
-
-    this.app.loop.tick = () => {
-      this.fpsGraph.begin();
-      this.app.tick();
-      this.fpsGraph.end();
-    };
-
-    const lifecycleMethods = ["start", "stop", "dispose"] as const;
-
-    (<EssentialsPlugin.ButtonGridApi>this.addBlade({
-      view: "buttongrid",
-      size: [lifecycleMethods.length, 1],
-      cells: (x: number) => ({ title: lifecycleMethods[x] }),
-      label: "",
-    })).on("click", (event: any) => {
-      this.app[lifecycleMethods[event.index[0]]]();
-      this.toggleFpsGraph(this.app.loop.running);
-    });
-
     this.applyStyle();
   }
 
   public start(): void {
     this.app.renderer.domElement.parentElement?.appendChild(this.container);
-
-    console.log("🚀 Démarrage de la GUI...");
-
-    // Système de retry avec compteur pour éviter les boucles infinies
     let retryCount = 0;
-    const maxRetries = 20; // Maximum 20 tentatives (4 secondes)
-
+    const maxRetries = 20;
     const checkAndAddControls = () => {
       retryCount++;
-      console.log(
-        `🔍 Tentative ${retryCount}/${maxRetries} - Vérification du matériau du soleil...`
-      );
 
       if (this.app.sunMaterial && this.app.sunMaterial.uniforms) {
-        console.log("✅ Matériau trouvé, ajout des contrôles...");
         this.addSunControls();
       } else if (retryCount < maxRetries) {
-        console.log(`⏳ Matériau non trouvé, retry dans 200ms...`);
         setTimeout(checkAndAddControls, 200);
       } else {
         console.error(
@@ -73,19 +37,11 @@ export class GUI extends Pane implements Lifecycle {
           maxRetries,
           "tentatives"
         );
-        console.log("🔍 Debug - App:", this.app);
-        console.log("🔍 Debug - Scene:", this.app.scene);
-        console.log(
-          "🔍 Debug - Enhanced material:",
-          this.app.scene?.enhancedSunMaterial
-        );
       }
     };
 
-    // Première tentative après 100ms
     setTimeout(checkAndAddControls, 100);
 
-    // Ajouter les contrôles des planètes immédiatement
     this.addPlanetControls();
   }
 
@@ -168,22 +124,5 @@ export class GUI extends Pane implements Lifecycle {
       this.app.scene.orbitalSpeedMultiplier = 1;
       this.refresh();
     });
-  }
-
-  private toggleFpsGraph(enabled: boolean): void {
-    this.fpsGraph.disabled = !enabled;
-
-    const stopwatch = (<any>this.fpsGraph.controller.valueController)
-      .stopwatch_;
-
-    if (!stopwatch.baseCalculateFps_) {
-      stopwatch.baseCalculateFps_ = stopwatch.calculateFps_;
-    }
-
-    stopwatch.calculateFps_ = enabled ? stopwatch.baseCalculateFps_ : () => 0;
-
-    if (!enabled) {
-      stopwatch.fps_ = 0;
-    }
   }
 }
