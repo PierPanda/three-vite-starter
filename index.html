@@ -9,8 +9,44 @@
     <script type="module" defer src="src/index.ts"></script>
   </head>
   <body>
-    <canvas></canvas>
-    <div class="loader">
+    <!-- Page d'accueil -->
+    <div id="welcome-screen" class="welcome-screen">
+      <div class="welcome-content">
+        <div class="welcome-header">
+          <div class="logo-container">
+            <div class="logo-rings">
+              <div class="ring" id="ring-1"></div>
+              <div class="ring" id="ring-2"></div>
+              <div class="ring" id="ring-3"></div>
+            </div>
+            <h1 class="welcome-title">ASTRO</h1>
+          </div>
+          <p class="welcome-subtitle">
+            Explorez les merveilles de notre système solaire
+          </p>
+        </div>
+
+        <div class="welcome-actions">
+          <button id="enter-app" class="enter-button">
+            <span class="button-text">Commencer l'exploration</span>
+            <div class="button-glow"></div>
+          </button>
+          <p class="welcome-note">Cliquez pour débuter votre voyage spatial</p>
+        </div>
+      </div>
+
+      <div class="welcome-bg-effects">
+        <div class="cosmic-particles"></div>
+        <div class="orbital-paths">
+          <div class="orbit orbit-1"></div>
+          <div class="orbit orbit-2"></div>
+          <div class="orbit orbit-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <canvas style="display: none"></canvas>
+    <div class="loader" style="display: none">
       <div class="loader-container">
         <div class="loader-planet-container">
           <img
@@ -26,6 +62,66 @@
             <span class="dot"></span>
             <span class="dot"></span>
             <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale d'instructions -->
+    <div id="instructions-overlay" class="instructions-overlay">
+      <div id="instructions-modal" class="instructions-modal">
+        <div class="instructions-content">
+          <div class="instructions-header">
+            <div class="instructions-icon">
+              <div class="icon-planet"></div>
+              <div class="icon-orbit"></div>
+            </div>
+            <h2 class="instructions-title">
+              Bienvenue dans le système solaire
+            </h2>
+            <button id="instructions-close" class="instructions-close">
+              &times;
+            </button>
+          </div>
+
+          <div class="instructions-body">
+            <div class="instruction-item">
+              <div class="instruction-icon">🚀</div>
+              <div class="instruction-text">
+                <strong>Explorez librement</strong>
+                <p>
+                  Utilisez votre souris pour naviguer dans l'espace et observer
+                  les planètes
+                </p>
+              </div>
+            </div>
+
+            <div class="instruction-item">
+              <div class="instruction-icon">🪐</div>
+              <div class="instruction-text">
+                <strong>Découvrez les planètes</strong>
+                <p>
+                  Cliquez sur une planète pour afficher ses informations
+                  détaillées
+                </p>
+              </div>
+            </div>
+
+            <div class="instruction-item">
+              <div class="instruction-icon">✨</div>
+              <div class="instruction-text">
+                <strong>Immersion totale</strong>
+                <p>
+                  Profitez de l'expérience avec le son et les effets visuels
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="instructions-footer">
+            <button id="instructions-continue" class="instructions-button">
+              Commencer l'exploration
+            </button>
           </div>
         </div>
       </div>

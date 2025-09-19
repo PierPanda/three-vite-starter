@@ -102,25 +102,23 @@ export class ExampleScene extends Scene implements Lifecycle {
   public orbitalSpeedMultiplier: number = 1;
 
   public async load(): Promise<void> {
-    const solarsystem = await new Promise<GLTF>((resolve, reject) => {
-      new GLTFLoader().load(SolarSystem, resolve, undefined, reject);
-    });
-
-    const imperialDestroyer = await new Promise<GLTF>((resolve, reject) => {
-      new GLTFLoader().load(ImperialDestroyer, resolve, undefined, reject);
-    });
-
-    const skybox = await new Promise<Texture>((resolve, reject) => {
-      new UltraHDRLoader().load(skyboxTexture, resolve, undefined, reject);
-    });
-
-    const noiseMap = await new Promise<Texture>((resolve, reject) => {
-      new TextureLoader().load(noiseMapsrc, resolve, reject);
-    });
-
-    const sunMap = await new Promise<Texture>((resolve, reject) => {
-      new TextureLoader().load(sunMapsrc, resolve, reject);
-    });
+    const [solarsystem, imperialDestroyer, skybox, noiseMap, sunMap] = await Promise.all([
+      new Promise<GLTF>((resolve, reject) => {
+        new GLTFLoader().load(SolarSystem, resolve, undefined, reject);
+      }),
+      new Promise<GLTF>((resolve, reject) => {
+        new GLTFLoader().load(ImperialDestroyer, resolve, undefined, reject);
+      }),
+      new Promise<Texture>((resolve, reject) => {
+        new UltraHDRLoader().load(skyboxTexture, resolve, undefined, reject);
+      }),
+      new Promise<Texture>((resolve, reject) => {
+        new TextureLoader().load(noiseMapsrc, resolve, reject);
+      }),
+      new Promise<Texture>((resolve, reject) => {
+        new TextureLoader().load(sunMapsrc, resolve, reject);
+      })
+    ]);
 
     sunMap.wrapS = RepeatWrapping;
     sunMap.wrapT = RepeatWrapping;
@@ -196,7 +194,7 @@ export class ExampleScene extends Scene implements Lifecycle {
       sound.setRefDistance(20);
       sound.play();
       sound.setLoop(true);
-      sound.setVolume(0.45);
+      sound.setVolume(0.75);
     });
     imperialDestroyer.scene.add(sound);
   }

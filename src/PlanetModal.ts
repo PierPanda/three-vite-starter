@@ -202,10 +202,8 @@ export class PlanetModal {
       return;
     }
 
-    // Empêcher le comportement par défaut pour éviter les doubles événements
     event.preventDefault();
 
-    // Utiliser le premier point de contact
     const touch = event.changedTouches[0];
     if (!touch) return;
 
