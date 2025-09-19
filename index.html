@@ -10,7 +10,23 @@
   <body>
     <canvas></canvas>
     <div class="loader">
-      <img src="assets/loader/planet.gif" alt="Loading..." class="loader-gif" />
+      <div class="loader-container">
+        <div class="loader-planet-container">
+          <img
+            src="assets/loader/planet.gif"
+            alt="Loading..."
+            class="loader-gif"
+          />
+        </div>
+        <div class="loader-text">
+          <span class="loading-label">Chargement</span>
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="planet-modal" class="planet-modal">

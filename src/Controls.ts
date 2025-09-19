@@ -47,11 +47,11 @@ export class Controls extends CameraControls implements Lifecycle {
     this.clock = clock;
     this.element = element;
     this.minDistance = 100;
-    this.maxDistance = 50000;
+    this.maxDistance = 10000;
     this.setPosition(0, 0, -2000);
 
-    this.dampingFactor = 0.05;
-    this.draggingDampingFactor = 0.25;
+    this.smoothTime = 0.05;
+    this.draggingSmoothTime = 0.25;
 
     this.setupKeyboardControls();
   }

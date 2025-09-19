@@ -29,7 +29,7 @@ export class App implements Lifecycle {
   public constructor({ canvas, debug = false }: AppParameters = {}) {
     this.debug = debug;
     this.clock = new Clock();
-    this.camera = new PerspectiveCamera(60, 1, 1, 50000);
+    this.camera = new PerspectiveCamera(60, 1, 1, 15000);
 
     this.renderer = new WebGLRenderer({
       canvas,

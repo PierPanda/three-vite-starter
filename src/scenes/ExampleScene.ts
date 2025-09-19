@@ -10,6 +10,7 @@ import {
   type Texture,
   Material,
   RepeatWrapping,
+  PointLightHelper,
 } from "three";
 
 import { isMesh } from "~/utils/is-mesh";
@@ -18,12 +19,13 @@ import type { Controls } from "~/Controls";
 import { EnhancedSunMaterial } from "~/materials/EnhancedSunMaterial";
 
 import SolarSystem from "~~/assets/models/scene.glb";
+import ImperialDestroyer from "~~/assets/models/star_wars_imperial_ii_star_destroyer.glb";
 import skyboxTexture from "../../assets/textures/HDR_blue_nebulae-1.jpg";
 import noiseTexture from "../../assets/textures/perlin-noise.png";
 import planetsData from "~~/assets/constantes/planets.json";
 
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { RGBELoader, UltraHDRLoader } from "three/examples/jsm/Addons.js";
+import { UltraHDRLoader } from "three/examples/jsm/Addons.js";
 import type { Viewport, Clock, Lifecycle } from "~/core";
 
 import noiseMapsrc from "~~/assets/textures/perlin-noise.png";
@@ -100,6 +102,10 @@ export class ExampleScene extends Scene implements Lifecycle {
       new GLTFLoader().load(SolarSystem, resolve, undefined, reject);
     });
 
+    const imperialDestroyer = await new Promise<GLTF>((resolve, reject) => {
+      new GLTFLoader().load(ImperialDestroyer, resolve, undefined, reject);
+    });
+
     const skybox = await new Promise<Texture>((resolve, reject) => {
       new UltraHDRLoader().load(skyboxTexture, resolve, undefined, reject);
     });
@@ -155,7 +161,19 @@ export class ExampleScene extends Scene implements Lifecycle {
         this.add(child);
       }
     });
-    this.controls.setPosition(15000, 15000, 15000);
+    imperialDestroyer.scene.position.set(0, 6000, 0);
+
+    imperialDestroyer.scene.rotation.x = Math.PI;
+
+    imperialDestroyer.scene.scale.setScalar(0.35);
+    const destroyerLight = new PointLight(0xffffff, 25000, 2000, 2.2);
+    imperialDestroyer.scene.add(destroyerLight);
+    // this.add(new PointLightHelper(destroyerLight, 5));
+    destroyerLight.position.set(0, -400, -400);
+
+    this.add(imperialDestroyer.scene);
+
+    this.controls.setPosition(3000, 3000, 3000);
     this.controls.setTarget(0, 0, 0);
 
     this.planetModal = new PlanetModal(
