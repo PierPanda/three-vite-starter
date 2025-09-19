@@ -10,12 +10,17 @@ import {
   type Texture,
   Material,
   RepeatWrapping,
+  AudioLoader,
+  PositionalAudio,
+  AudioListener,
 } from "three";
 
 import { isMesh } from "~/utils/is-mesh";
 import { PlanetModal } from "~/PlanetModal";
 import type { Controls } from "~/Controls";
 import { EnhancedSunMaterial } from "~/materials/EnhancedSunMaterial";
+
+import DestroyerMarch from "~~/assets/music/StarWars.mp3";
 
 import SolarSystem from "~~/assets/models/scene.glb";
 import ImperialDestroyer from "~~/assets/models/star_wars_imperial_ii_star_destroyer.glb";
@@ -180,6 +185,19 @@ export class ExampleScene extends Scene implements Lifecycle {
       this.planets,
       this
     );
+
+    const listener = new AudioListener();
+    this.camera.add(listener);
+    const sound = new PositionalAudio(listener);
+    const audioLoader = new AudioLoader();
+    audioLoader.load(DestroyerMarch, function (buffer) {
+      sound.setBuffer(buffer);
+      sound.setRefDistance(20);
+      sound.play();
+      sound.setLoop(true);
+      sound.setVolume(0.75);
+    });
+    imperialDestroyer.scene.add(sound);
   }
 
   public update(): void {
