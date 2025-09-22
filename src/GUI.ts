@@ -129,13 +129,11 @@ export class GUI extends Pane implements Lifecycle {
     const sunMaterial = this.app.sunMaterial;
 
     if (sunMaterial && sunMaterial.uniforms) {
-      // Supprimer l'ancien dossier s'il existe
       if (this.sunFolder) {
         this.sunFolder.dispose();
         this.sunFolder = null;
       }
 
-      // Créer un nouveau dossier pour les contrôles du soleil
       this.sunFolder = this.addFolder({
         title: "☀️ Contrôles du Soleil",
         expanded: true,
@@ -152,27 +150,33 @@ export class GUI extends Pane implements Lifecycle {
           label: "🌀 Vitesse",
         });
 
-        this.sunFolder.addBinding(sunMaterial.uniforms.noiseAmplitude, "value", {
-          min: 0,
-          max: 1,
-          step: 0.01,
-          label: "📈 Amplitude",
+        this.sunFolder.addBinding(
+          sunMaterial.uniforms.noiseAmplitude,
+          "value",
+          {
+            min: 0,
+            max: 1,
+            step: 0.01,
+            label: "📈 Amplitude",
+          }
+        );
+
+        const sunResetButton = this.sunFolder.addButton({
+          title: "🔄 Réinitialiser",
         });
 
-        this.sunFolder
-          .addButton({
-            title: "🔄 Réinitialiser",
-          })
-          .on("click", () => {
-            const defaultNoiseSpeed = 0.025;
-            const defaultNoiseAmplitude = 0.2;
+        const sunResetHandler = () => {
+          const defaultNoiseSpeed = 0.025;
+          const defaultNoiseAmplitude = 0.2;
 
-            sunMaterial.uniforms.noiseSpeed.value = defaultNoiseSpeed;
-            sunMaterial.uniforms.noiseAmplitude.value = defaultNoiseAmplitude;
+          sunMaterial.uniforms.noiseSpeed.value = defaultNoiseSpeed;
+          sunMaterial.uniforms.noiseAmplitude.value = defaultNoiseAmplitude;
 
-            // Rafraîchir les valeurs sans recréer les contrôles
-            this.refresh();
-          });
+          this.refresh();
+        };
+
+        sunResetButton.on("click", sunResetHandler);
+        sunResetButton.element.addEventListener("touchend", sunResetHandler);
       }
     }
   }
@@ -190,14 +194,17 @@ export class GUI extends Pane implements Lifecycle {
       label: "🌌 Vitesse Orbitale",
     });
 
-    planetFolder
-      .addButton({
-        title: "🔄 Réinitialiser",
-      })
-      .on("click", () => {
-        this.app.scene.orbitalSpeedMultiplier = 1;
-        this.refresh();
-      });
+    const planetResetButton = planetFolder.addButton({
+      title: "🔄 Réinitialiser",
+    });
+
+    const planetResetHandler = () => {
+      this.app.scene.orbitalSpeedMultiplier = 1;
+      this.refresh();
+    };
+
+    planetResetButton.on("click", planetResetHandler);
+    planetResetButton.element.addEventListener("touchend", planetResetHandler);
 
     this.addBinding(this.app.scene, "orbitalSpeedMultiplier", {
       readonly: true,
